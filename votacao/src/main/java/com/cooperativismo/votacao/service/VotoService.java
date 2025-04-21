@@ -27,7 +27,7 @@ public class VotoService {
         Pauta pauta = pautaRepository.findById(pautaId)
                 .orElseThrow(() -> new RuntimeException("Pauta não encontrada"));
 
-        Associado associado = associadoRepository.findByCPF(cpf)
+        Associado associado = associadoRepository.findBycpf(cpf)
                 .orElseThrow(() -> new RuntimeException("Associado não encontrado"));
 
         if (votoRepository.existsByAssociadoAndPauta(associado, pauta)) {

@@ -17,7 +17,7 @@ public class AssociadoService {
     }
 
     public Associado buscarAssociadoPorCPF(String cpf) {
-        return associadoRepository.findByCPF(cpf)
+        return associadoRepository.findBycpf(cpf)
                 .orElseThrow(() -> new RuntimeException("Associado não encontrado"));
     }
 }
