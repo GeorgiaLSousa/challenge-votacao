@@ -31,7 +31,7 @@ Tecnologias
 
 •	Spring Boot Starter Web
 
-O foco dessa avaliação é a comunicação entre o backend e o aplicativo mobile. Essa comunicação é feita através de mensagens no formato JSON, onde essas mensagens serão interpretadas pelo cliente para montar as telas onde o usuário vai interagir com o sistema. A aplicação cliente não faz parte da avaliação, apenas os componentes do servidor. O formato padrão dessas mensagens será detalhado no anexo 1.
+O foco dessa avaliação é a comunicação entre o backend e o aplicativo mobile. Essa comunicação é feita através de mensagens no formato JSON, onde essas mensagens serão interpretadas pelo cliente para montar as telas onde o usuário vai interagir com o sistema. 
 
 ## Como executar o Projeto
 
@@ -54,60 +54,84 @@ O foco dessa avaliação é a comunicação entre o backend e o aplicativo mobil
 ### Estrutura de Pacotes
 
 •	com.example.votacao: Pacote principal com as classes de serviço, controller, e repositórios.
+
 •	controller: Camada de controle da aplicação (APIs REST).
+
 •	entity: Entidades JPA que representam os objetos de negócio (Pauta, Sessao, Voto).
+
 •	repository: Repositórios JPA para persistência.
+
 •	service: Lógica de negócios para as operações.
+
 •	exception: Tratamento de exceções global.
-•	client: Cliente para validação de CPF (integração fake).
+
+•	client: Cliente para validação de CPF.
+
 •	config: Configurações da aplicação, incluindo Swagger.
 
-### Tarefa Bônus 2 - Performance
-
-- Imagine que sua aplicação possa ser usada em cenários que existam centenas de
-  milhares de votos. Ela deve se comportar de maneira performática nesses
-  cenários
-- Testes de performance são uma boa maneira de garantir e observar como sua
-  aplicação se comporta
 
 ### Endpoints
 
 1. Criar Pauta
 
-POST /pautas
+POST /api/v1/pautas
+
 {
 "titulo": "Pauta 1",
 "descricao": "Descrição da pauta"
 }
 
 Abrir Sessão de Votação
-POST /sessoes/{pautaId}
+POST /api/v1/sessoes/abrir
+
+{
+  "id": 1,
+  "inicio": "2023-10-05T10:00:00",
+  "fim": "2023-10-05T10:05:00",
+  "pauta": {
+    "id": 1,
+    "titulo": "Pauta 1",
+    "descricao": "Descrição da Pauta"
+  }
+}
 
 Votação
-POST /votos/{pautaId}
+POST /api/v1/votos
 {
-"cpf": "12345678900",
-"voto": "SIM"
+    "cpf": "2234058804",
+     "pauta": {
+    "id": 2,
+    "titulo": "Título da Pauta",
+    "descricao": "Descrição da Pauta"
+    },
+    "voto": "true"
 }
 
 Contabilizar Votos
 
-GET /voto/resultado
-
-○ Como você versionaria a API da sua aplicação? Que estratégia usar?
+GET /api/v1/voto/resultado/{pautaId}
+{
+    "pautaId" : "1"
+}
 
 ## Testes
 
 Os testes estão localizados no diretório src/test/java.
-./mvnw test
+
 
 Os testes cobrem as principais funcionalidades da aplicação, incluindo:
+
 •	Cadastro de pautas
+
 •	Abertura de sessões de votação
+
 •	Registro de votos
+
 •	Validação de CPF
 
 ## Desafios e Tarefas Bônus
 •	Integração com sistemas externos: A validação de CPF é realizada atráves de modo aleatorio que retorna se o CPF pode ou não votar.
+
 •	Performance: A aplicação foi projetada para lidar com um grande volume de votos.
+
 •	Versionamento da API: Para futuras versões, o versionamento da API pode ser feito por URL (/api/v1/votos).
