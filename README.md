@@ -47,7 +47,7 @@ O foco dessa avaliação é a comunicação entre o backend e o aplicativo mobil
       Você pode acessar o banco de dados em memória H2 através da interface web no seguinte URL:
       •	H2 Console: http://localhost:8080/h2-console
       Use as seguintes credenciais para acessar o banco:
-      •	URL: jdbc:h2:mem:desafiovotacao
+      •	URL: jdbc:h2:mem:votacaodb
       •	Usuário: sa
       •	Senha: sa
 
