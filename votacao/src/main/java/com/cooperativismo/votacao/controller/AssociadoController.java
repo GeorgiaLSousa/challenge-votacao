@@ -2,21 +2,19 @@ package com.cooperativismo.votacao.controller;
 
 import com.cooperativismo.votacao.model.Associado;
 import com.cooperativismo.votacao.service.AssociadoService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@AllArgsConstructor
 @Controller
 @RequestMapping("/associados")
 public class AssociadoController {
 
     private final AssociadoService associadoService;
-
-    public AssociadoController(AssociadoService associadoService) {
-        this.associadoService = associadoService;
-    }
 
     @PostMapping
     public ResponseEntity<Associado> criarAssociado(@RequestBody Associado associado) {

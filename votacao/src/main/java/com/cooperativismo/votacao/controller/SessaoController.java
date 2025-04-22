@@ -2,22 +2,22 @@ package com.cooperativismo.votacao.controller;
 
 import com.cooperativismo.votacao.model.Sessao;
 import com.cooperativismo.votacao.service.SessaoService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@AllArgsConstructor
 @Controller
+@RequestMapping("/sessoes")
 public class SessaoController {
-
 
     private final SessaoService sessaoService;
 
-    public SessaoController(SessaoService sessaoService) {
-        this.sessaoService = sessaoService;
-    }
 
     @PostMapping("/abrir")
     public ResponseEntity<Sessao> abrirSessao(@RequestParam Long pautaId,

@@ -1,6 +1,7 @@
 package com.cooperativismo.votacao.controller;
 import com.cooperativismo.votacao.model.Pauta;
 import com.cooperativismo.votacao.service.PautaService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,15 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Controller
 @RequestMapping("/pautas")
 public class PautaController {
 
     private final PautaService pautaService;
-
-    public PautaController(PautaService pautaService) {
-        this.pautaService = pautaService;
-    }
 
     // Endpoint para criar uma nova pauta
     @PostMapping

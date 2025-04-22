@@ -7,6 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface AssociadoRepository extends JpaRepository<Associado, Long> {
-
     Optional<Associado> findBycpf(String cpf);
 }

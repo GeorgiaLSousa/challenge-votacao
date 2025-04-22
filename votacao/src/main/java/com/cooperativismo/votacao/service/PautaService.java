@@ -1,18 +1,16 @@
 package com.cooperativismo.votacao.service;
 import com.cooperativismo.votacao.model.Pauta;
 import com.cooperativismo.votacao.repository.PautaRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class PautaService {
 
     private final PautaRepository pautaRepository;
-
-    public PautaService(PautaRepository pautaRepository) {
-        this.pautaRepository = pautaRepository;
-    }
 
     public Pauta criarPauta(Pauta pauta){
         return pautaRepository.save(pauta);
