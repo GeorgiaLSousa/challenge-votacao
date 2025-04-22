@@ -1,4 +1,5 @@
 package com.cooperativismo.votacao.service;
+import com.cooperativismo.votacao.client.ValidacaoCpf;
 import com.cooperativismo.votacao.model.Associado;
 import com.cooperativismo.votacao.repository.AssociadoRepository;
 import lombok.AllArgsConstructor;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Service;
 public class AssociadoService {
 
     private final AssociadoRepository associadoRepository;
+    private final ValidacaoCpf validacaoCpf;
 
     public Associado criarAssociado(Associado associado) {
+        validacaoCpf.validarCpf(associado.getCpf());
         return associadoRepository.save(associado);
     }
 
