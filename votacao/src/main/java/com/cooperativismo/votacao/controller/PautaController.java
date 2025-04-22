@@ -1,6 +1,8 @@
 package com.cooperativismo.votacao.controller;
 import com.cooperativismo.votacao.model.Pauta;
 import com.cooperativismo.votacao.service.PautaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,14 +12,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Pautas", description = "Gerenciamento de pautas")
 @AllArgsConstructor
 @Controller
-@RequestMapping("/pautas")
+@RequestMapping("/api/v1/pautas")
 public class PautaController {
 
     private final PautaService pautaService;
 
+
     // Endpoint para criar uma nova pauta
+    @Operation(summary = "Criar uma nova pauta", description = "Endpoint para criar uma nova pauta.")
     @PostMapping
     public ResponseEntity<Pauta> criarPauta(@RequestBody Pauta pauta) {
         Pauta novaPauta = pautaService.criarPauta(pauta);
@@ -26,6 +31,7 @@ public class PautaController {
 
 
     // Endpoint para listar todas as pautas
+    @Operation(summary = "Listar todas as pautas", description = "Endpoint para listar todas as pautas cadastradas.")
     @GetMapping
     public ResponseEntity<List<Pauta>> listarPautas() {
         List<Pauta> pautas = pautaService.listarPautas();

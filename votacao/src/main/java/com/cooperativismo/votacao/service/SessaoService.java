@@ -14,6 +14,7 @@ public class SessaoService {
     private final AssociadoService associadoService;
     private final PautaRepository pautaRepository;
 
+    // Metodo para abrir uma nova sessão
     public Sessao abrirSessao(Long PautaId, Integer minutos){
         Pauta pauta = pautaRepository.findById(PautaId)
                 .orElseThrow(() -> new RuntimeException("Pauta não encontrada"));

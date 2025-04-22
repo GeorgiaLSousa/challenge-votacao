@@ -16,7 +16,7 @@ import java.util.Map;
 
 @AllArgsConstructor
 @Controller
-@RequestMapping("/voto")
+@RequestMapping("/api/v1/voto")
 public class VotoController {
 
     private final VotoService votoService;
@@ -36,7 +36,7 @@ public class VotoController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/resultado")
+    @GetMapping("/resultado/{pautaId}")
     public ResponseEntity<Map<String, Object>> resultadoDaVotacao(@RequestParam Long pautaId) {
         Map<String, Object> resultado = votoService.ResultadoDaVotacao(pautaId);
         return ResponseEntity.status(HttpStatus.OK).body(resultado);

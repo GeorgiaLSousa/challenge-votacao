@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @AllArgsConstructor
 @Controller
-@RequestMapping("/associados")
+@RequestMapping("/api/v1/associados")
 public class AssociadoController {
 
     private final AssociadoService associadoService;

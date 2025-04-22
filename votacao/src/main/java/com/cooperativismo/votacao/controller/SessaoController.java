@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @AllArgsConstructor
 @Controller
-@RequestMapping("/sessoes")
+@RequestMapping("/api/v1/sessoes")
 public class SessaoController {
 
     private final SessaoService sessaoService;

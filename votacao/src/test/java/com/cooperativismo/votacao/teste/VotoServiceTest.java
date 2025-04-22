@@ -1,95 +1,111 @@
 package com.cooperativismo.votacao.teste;
 
-import com.cooperativismo.votacao.model.Associado;
-import com.cooperativismo.votacao.model.Pauta;
-import com.cooperativismo.votacao.model.Sessao;
-import com.cooperativismo.votacao.model.Voto;
-import com.cooperativismo.votacao.repository.AssociadoRepository;
-import com.cooperativismo.votacao.repository.PautaRepository;
-import com.cooperativismo.votacao.repository.VotoRepository;
-import com.cooperativismo.votacao.service.VotoService;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+    import com.cooperativismo.votacao.client.ValidacaoCpf;
+    import com.cooperativismo.votacao.model.Associado;
+    import com.cooperativismo.votacao.model.Pauta;
+    import com.cooperativismo.votacao.model.Sessao;
+    import com.cooperativismo.votacao.model.Voto;
+    import com.cooperativismo.votacao.repository.AssociadoRepository;
+    import com.cooperativismo.votacao.repository.PautaRepository;
+    import com.cooperativismo.votacao.repository.VotoRepository;
+    import com.cooperativismo.votacao.service.VotoService;
+    import org.junit.jupiter.api.BeforeEach;
+    import org.junit.jupiter.api.Test;
+    import org.junit.jupiter.api.extension.ExtendWith;
+    import org.mockito.InjectMocks;
+    import org.mockito.Mock;
+    import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+    import java.time.LocalDateTime;
+    import java.util.Map;
+    import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+    import static org.junit.jupiter.api.Assertions.*;
+    import static org.mockito.Mockito.*;
 
-class VotoServiceTest {
+    @ExtendWith(MockitoExtension.class)
+    class VotoServiceTest {
 
-    private final VotoRepository votoRepository = Mockito.mock(VotoRepository.class);
-    private final AssociadoRepository associadoRepository = Mockito.mock(AssociadoRepository.class);
-    private final PautaRepository pautaRepository = Mockito.mock(PautaRepository.class);
-    private final VotoService votoService = new VotoService(votoRepository, associadoRepository, pautaRepository);
+        @InjectMocks
+        private VotoService votoService;
 
-    @Test
-    void deveRegistrarVotoComSucesso() {
-        String cpf = "12345678901";
-        Long pautaId = 1L;
-        Boolean votoValor = true;
+        @Mock
+        private VotoRepository votoRepository;
 
-        Associado associado = new Associado();
-        associado.setCpf(cpf);
+        @Mock
+        private AssociadoRepository associadoRepository;
 
-        Pauta pauta = new Pauta();
-        Sessao sessao = new Sessao();
-        sessao.setInicio(LocalDateTime.now().minusMinutes(5));
-        sessao.setFim(LocalDateTime.now().plusMinutes(5));
-        pauta.setSessao(sessao);
+        @Mock
+        private PautaRepository pautaRepository;
 
-        when(associadoRepository.findBycpf(cpf)).thenReturn(Optional.of(associado));
-        when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
-        when(votoRepository.existsByAssociadoAndPauta(associado, pauta)).thenReturn(false);
+        @Mock
+        private ValidacaoCpf validacaoCpf;
 
-        votoService.registrarVoto(cpf, pautaId, votoValor);
+        private Pauta pauta;
+        private Associado associado;
 
-        verify(votoRepository, times(1)).save(any(Voto.class));
+        @BeforeEach
+        void setUp() {
+            pauta = new Pauta();
+            pauta.setId(1L);
+            pauta.setTitulo("Pauta Teste");
+            pauta.setSessao(new Sessao());
+            pauta.getSessao().setInicio(LocalDateTime.now().minusMinutes(10));
+            pauta.getSessao().setFim(LocalDateTime.now().plusMinutes(10));
+
+            associado = new Associado();
+            associado.setId(1L);
+            associado.setCpf("12345678900");
+        }
+
+        @Test
+        void deveRegistrarVotoComCpfValido() {
+            lenient().when(validacaoCpf.validarCpf("12345678900")).thenReturn(Map.of("status", "ABLE_TO_VOTE"));
+            when(associadoRepository.findBycpf("12345678900")).thenReturn(Optional.of(associado));
+            when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
+            when(votoRepository.existsByAssociadoAndPauta(associado, pauta)).thenReturn(false);
+
+            votoService.registrarVoto("12345678900", 1L, true);
+
+            verify(votoRepository, times(1)).save(any(Voto.class));
+        }
+
+        @Test
+        void deveLancarExcecaoQuandoCpfInvalido() {
+            when(validacaoCpf.validarCpf("12345678900")).thenThrow(new RuntimeException("CPF inválido"));
+
+            RuntimeException exception = assertThrows(RuntimeException.class, () ->
+                    votoService.registrarVoto("12345678900", 1L, true));
+
+            assertEquals("CPF inválido", exception.getMessage());
+            verify(votoRepository, never()).save(any());
+        }
+
+        @Test
+        void deveLancarExcecaoQuandoAssociadoJaVotou() {
+            lenient().when(validacaoCpf.validarCpf("12345678900")).thenReturn(Map.of("status", "ABLE_TO_VOTE"));
+            when(associadoRepository.findBycpf("12345678900")).thenReturn(Optional.of(associado));
+            when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
+            when(votoRepository.existsByAssociadoAndPauta(associado, pauta)).thenReturn(true);
+
+            RuntimeException exception = assertThrows(RuntimeException.class, () ->
+                    votoService.registrarVoto("12345678900", 1L, true));
+
+            assertEquals("Associado já votou nesta pauta.", exception.getMessage());
+            verify(votoRepository, never()).save(any());
+        }
+
+        @Test
+        void deveLancarExcecaoQuandoSessaoEncerrada() {
+            pauta.getSessao().setFim(LocalDateTime.now().minusMinutes(1));
+            lenient().when(validacaoCpf.validarCpf("12345678900")).thenReturn(Map.of("status", "ABLE_TO_VOTE"));
+            when(associadoRepository.findBycpf("12345678900")).thenReturn(Optional.of(associado));
+            when(pautaRepository.findById(1L)).thenReturn(Optional.of(pauta));
+
+            RuntimeException exception = assertThrows(RuntimeException.class, () ->
+                    votoService.registrarVoto("12345678900", 1L, true));
+
+            assertEquals("Sessão já foi encerrada.", exception.getMessage());
+            verify(votoRepository, never()).save(any());
+        }
     }
-
-    @Test
-    void deveLancarExcecaoQuandoAssociadoJaVotou() {
-        String cpf = "12345678901";
-        Long pautaId = 1L;
-        Boolean votoValor = true;
-
-        Associado associado = new Associado();
-        associado.setCpf(cpf);
-
-        Pauta pauta = new Pauta();
-        Sessao sessao = new Sessao();
-        sessao.setInicio(LocalDateTime.now().minusMinutes(5));
-        sessao.setFim(LocalDateTime.now().plusMinutes(5));
-        pauta.setSessao(sessao);
-
-        when(associadoRepository.findBycpf(cpf)).thenReturn(Optional.of(associado));
-        when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
-        when(votoRepository.existsByAssociadoAndPauta(associado, pauta)).thenReturn(true);
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> votoService.registrarVoto(cpf, pautaId, votoValor));
-
-        assertEquals("Associado já votou nesta pauta.", exception.getMessage());
-        verify(votoRepository, never()).save(any(Voto.class));
-    }
-
-    @Test
-    void deveLancarExcecaoQuandoSessaoNaoEstaAberta() {
-        String cpf = "12345678901";
-        Long pautaId = 1L;
-        Boolean votoValor = true;
-
-        Associado associado = new Associado();
-        associado.setCpf(cpf);
-
-        Pauta pauta = new Pauta();
-
-        when(associadoRepository.findBycpf(cpf)).thenReturn(Optional.of(associado));
-        when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> votoService.registrarVoto(cpf, pautaId, votoValor));
-
-        assertEquals("Sessão não está aberta para esta pauta.", exception.getMessage());
-        verify(votoRepository, never()).save(any(Voto.class));
-    }
-}

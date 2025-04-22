@@ -22,6 +22,7 @@ public class VotoService {
     private final AssociadoRepository associadoRepository;
     private final PautaRepository pautaRepository;
 
+    // Metodo para registrar um voto
     public void registrarVoto(String cpf, Long pautaId, Boolean votoValor) {
         log.info("Registrando voto para CPF: {}, Pauta ID: {}", cpf, pautaId);
 
@@ -47,6 +48,7 @@ public class VotoService {
         log.info("Voto registrado com sucesso para CPF: {}, Pauta ID: {}", cpf, pautaId);
     }
 
+    // Metodo para calcular o resultado da votação
     public Map<String, Object> ResultadoDaVotacao(Long pautaId) {
         log.info("Calculando resultado da votação para Pauta ID: {}", pautaId);
 
@@ -86,11 +88,15 @@ public class VotoService {
         );
     }
 
+
+    // Metodo para Buscar Pauta pelo seu ID
     private Pauta buscarPautaPorId(Long pautaId) {
         return pautaRepository.findById(pautaId)
                 .orElseThrow(() -> new RuntimeException("Pauta com ID " + pautaId + " não encontrada."));
     }
 
+
+    // Metodo para Buscar Associado pelo seu CPF
     private Associado buscarAssociadoPorCpf(String cpf) {
         return associadoRepository.findBycpf(cpf)
                 .orElseThrow(() -> new RuntimeException("Associado com CPF " + cpf + " não encontrado."));
