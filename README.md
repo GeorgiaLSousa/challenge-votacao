@@ -17,7 +17,7 @@ Tecnologias
 
 •	Maven
 
-•	Spring Boot 2.6.5
+•	Spring Boot 3.4.4
 
 •	Spring Data JPA
 
