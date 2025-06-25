@@ -57,7 +57,8 @@ POST /api/v1/pautas
 "descricao": "Descrição da pauta"
 }
 
-Abrir Sessão de Votação
+2. Abrir Sessão de Votação
+   
 POST /api/v1/sessoes/abrir
 
 {
@@ -71,7 +72,8 @@ POST /api/v1/sessoes/abrir
   }
 }
 
-Votação
+3. Votação
+   
 POST /api/v1/votos
 {
     "cpf": "2234058804",
@@ -83,7 +85,8 @@ POST /api/v1/votos
     "voto": "true"
 }
 
-Contabilizar Votos
+4. Contabilizar Votos
+   
 
 GET /api/v1/voto/resultado/{pautaId}
 {
